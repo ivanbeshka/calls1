@@ -96,8 +96,7 @@ public class MainFragment extends Fragment {
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView =
                 (SearchView) searchItem.getActionView();
-
-        searchView.setIconified(false);
+        searchView.setIconifiedByDefault(false);
 
         if (!TextUtils.isEmpty(savedQuery)) {
             searchItem.expandActionView();
@@ -108,7 +107,6 @@ public class MainFragment extends Fragment {
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
-
                 return true;
             }
 
@@ -133,7 +131,6 @@ public class MainFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String s) {
                 Log.debug(s);
-
                 savedQuery = s;
                 showSearches(s);
                 return false;

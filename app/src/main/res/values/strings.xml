@@ -8,4 +8,6 @@
     <string name="help">Помощь</string>
     <string name="browse">Поиск в сети</string>
     <string name="comments">Комментарии</string>
+    <string name="search_hint">Введите номер</string>
+    <string name="txtCredits"><a href="http://www.google.com">Найти в Google</a></string>
 </resources>

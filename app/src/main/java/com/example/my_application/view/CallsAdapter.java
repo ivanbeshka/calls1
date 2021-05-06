@@ -28,10 +28,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 
 public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> {
 
     private ArrayList<Call> calls;
+    private ArrayList<Call> data;
+    private ArrayList<Call> dbNumbers;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvCallNum;
@@ -48,8 +52,19 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> 
         }
     }
 
-    public CallsAdapter(ArrayList<Call> dataSet) {
+    public CallsAdapter(ArrayList<Call> dataSet, ArrayList<Call> dbNumbers) {
         calls = dataSet;
+        data = new ArrayList<>(dataSet);
+        this.dbNumbers = dbNumbers;
+    }
+
+    public void showUserCalls(){
+        calls = new ArrayList<>(data);
+        notifyDataSetChanged();
+    }
+
+    public boolean callsIsEmpty(){
+        return calls.isEmpty();
     }
 
     // Create new views (invoked by the layout manager)
@@ -105,7 +120,7 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> 
 
     private void setCallMenuClickListener(@NotNull ViewHolder viewHolder, Call currentCall) {
         AppDB db = Room.databaseBuilder(viewHolder.itemView.getContext().getApplicationContext(),
-            AppDB.class, "contact.db").allowMainThreadQueries().build();
+                AppDB.class, "contact.db").allowMainThreadQueries().build();
         viewHolder.ibPopUpMenu.setOnClickListener(view -> {
             PopupMenu popup = new PopupMenu(view.getContext(), view);
             popup.setOnMenuItemClickListener(item -> {
@@ -117,7 +132,6 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> 
                         clipboard.setPrimaryClip(clip);
                         return true;
                     case R.id.spam:
-
                         String phone = currentCall.getNum();
                         Log.debug(phone);
                         CallEntity call = db.callDao().getCall(phone);
@@ -149,9 +163,9 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> 
 
             String phone = currentCall.getNum();
             CallEntity call = db.callDao().getCall(phone);
-            if (call == null || !call.isSpam){
+            if (call == null || !call.isSpam) {
                 menu.getItem(1).setTitle("Спам");
-            }else {
+            } else {
                 menu.getItem(1).setTitle("Не спам");
             }
 
@@ -163,5 +177,25 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return calls.size();
+    }
+
+    public void filter(String search) {
+        search = search.toLowerCase();
+        calls.clear();
+        if (search.length() == 0) {
+            calls.addAll(data);
+        } else {
+
+            ArrayList<Call> localDataSearch = new ArrayList<>(data);
+            localDataSearch.addAll(dbNumbers);
+
+            for (Call call : localDataSearch) {
+                if (call.getNum().toLowerCase().contains(search) ||
+                        (call.getCachedName() != null && call.getCachedName().toLowerCase().contains(search))) {
+                    calls.add(call);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 }

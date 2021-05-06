@@ -7,6 +7,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.SearchView;
 
 import com.example.my_application.CallReceiver;
 import com.example.my_application.NotificationShower;
@@ -46,13 +48,6 @@ public class MainActivity extends AppCompatActivity {
         CallReceiver receiver = new CallReceiver();
         IntentFilter filter = new IntentFilter("android.intent.action.PHONE_STATE");
         getApplicationContext().registerReceiver(receiver, filter);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
     }
 
     private void navigateToMainFragment() {

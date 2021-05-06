@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Звонки</string>
+    <string name="profile">Профиль</string>
+    <string name="copy">Копировать</string>
+    <string name="spam">Спам</string>
+    <string name="search">Поиск</string>
+    <string name="settings">Настройки</string>
+    <string name="help">Помощь</string>
+    <string name="browse">Поиск в сети</string>
+    <string name="comments">Комментарии</string>
+</resources>

@@ -10,6 +10,9 @@
         <action
             android:id="@+id/action_mainFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -23,4 +26,8 @@
         android:id="@+id/commentsFragment"
         android:name="com.example.my_application.view.CommentsFragment"
         android:label="CommentsFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.my_application.view.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

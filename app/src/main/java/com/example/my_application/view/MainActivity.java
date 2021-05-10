@@ -8,17 +8,14 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.room.Room;
 
 import android.Manifest;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.widget.SearchView;
 
 import com.example.my_application.CallReceiver;
 import com.example.my_application.NotificationShower;
@@ -29,9 +26,10 @@ public class MainActivity extends AppCompatActivity {
 
     public AppDB db;
 
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
+    private static final int REQUEST_PERMISSIONS_READ_CALL_LOG = 1;
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 2;
     private static final int MY_PERMISSIONS_REQUEST_PROCESS_OUTGOING_CALLS = 3;
+    private static final int MY_PERMISSIONS_REQUEST_ANSWER_CALLS = 4;
 
     private final MyPhoneStateListener phoneStateListener = new MyPhoneStateListener();
 
@@ -72,24 +70,21 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.READ_CALL_LOG);
 
-        if (!shouldProvideRationale) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             // previously and checked "Never ask again".
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.READ_CALL_LOG},
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                    REQUEST_PERMISSIONS_READ_CALL_LOG);
         }
 
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_PHONE_STATE},
-                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
-        }
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.PROCESS_OUTGOING_CALLS)) {
-            // Permission has not been granted, therefore prompt the user to grant permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},
-                    MY_PERMISSIONS_REQUEST_PROCESS_OUTGOING_CALLS);
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ANSWER_PHONE_CALLS) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ANSWER_PHONE_CALLS},
+                        MY_PERMISSIONS_REQUEST_ANSWER_CALLS);
+            }
         }
     }
 
@@ -99,27 +94,23 @@ public class MainActivity extends AppCompatActivity {
     private boolean checkPermissions() {
         int permissionStateReadCalls = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CALL_LOG);
-        int permissionStateReadPhoneState = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.READ_PHONE_STATE);
-        int permissionStateOutgoingCalls = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.PROCESS_OUTGOING_CALLS);
+        int permissionStateAnswerCalls = PackageManager.PERMISSION_DENIED;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            permissionStateAnswerCalls = ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ANSWER_PHONE_CALLS);
+        }
 
         return permissionStateReadCalls == PackageManager.PERMISSION_GRANTED &&
-                permissionStateReadPhoneState == PackageManager.PERMISSION_GRANTED &&
-                permissionStateOutgoingCalls == PackageManager.PERMISSION_GRANTED;
+                permissionStateAnswerCalls == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+        if (requestCode == REQUEST_PERMISSIONS_READ_CALL_LOG) {
             if (grantResults.length <= 0) {
-                // If user interaction was interrupted, the permission request is cancelled and you
-                // receive empty arrays.
                 Log.i("Error", "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted. Kick off the process of building and connecting
-                // GoogleApiClient.
                 if (checkPermissions()) {
                     navigateToMainFragment();
                 }
@@ -127,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == MY_PERMISSIONS_REQUEST_READ_PHONE_STATE) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_ANSWER_CALLS) {
             if (grantResults.length <= 0) {
                 Log.i("Error", "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -144,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         private Context context;
 
-        public void setContext(Context context){
+        public void setContext(Context context) {
             this.context = context;
         }
 

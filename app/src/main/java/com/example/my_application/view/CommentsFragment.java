@@ -50,8 +50,6 @@ public class CommentsFragment extends Fragment {
 
         db = ((MainActivity) getActivity()).db;
 
-
-
         recyclerView = view.findViewById(R.id.rv_comments);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
         setRecyclerViewData();

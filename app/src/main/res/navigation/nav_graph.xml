@@ -14,5 +14,13 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.my_application.view.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.example.my_application.view.CommentsFragment"
+        android:label="CommentsFragment" />
 </navigation>

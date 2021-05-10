@@ -78,7 +78,7 @@ public class MainFragment extends Fragment {
     private void getCallDetails() {
         ArrayList<Call> calls = getCalls();
 
-        AppDB db = Room.databaseBuilder(getContext().getApplicationContext(), AppDB.class, "contact.db").allowMainThreadQueries().build();
+        AppDB db = ((MainActivity)getActivity()).db;
 
         ArrayList<Call> dbCalls = new ArrayList<>();
         for (CallEntity dbNumber : db.callDao().getAll()) {

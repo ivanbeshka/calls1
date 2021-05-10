@@ -2,6 +2,7 @@ package com.example.my_application.db;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface CallDao {
     @Query("SELECT * FROM callentity WHERE phone == :phone")
     CallEntity getCall(String phone);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(CallEntity... calls);
 
     @Query("DELETE FROM callentity WHERE phone == :phone")

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.room.Room;
 
 import android.Manifest;
 import android.app.SearchManager;
@@ -22,8 +23,11 @@ import android.widget.SearchView;
 import com.example.my_application.CallReceiver;
 import com.example.my_application.NotificationShower;
 import com.example.my_application.R;
+import com.example.my_application.db.AppDB;
 
 public class MainActivity extends AppCompatActivity {
+
+    public AppDB db;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 2;
@@ -40,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             navigateToMainFragment();
         }
+
+        db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "contact.db").allowMainThreadQueries().build();
 
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);

@@ -37,14 +37,13 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> 
     private ArrayList<Call> data;
     private ArrayList<Call> dbNumbers;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvCallNum;
         private final TextView tvCallTime;
         private final AppCompatImageButton ibPopUpMenu;
 
         public ViewHolder(View view) {
             super(view);
-// Define click listener for the ViewHolder's View
 
             ibPopUpMenu = view.findViewById(R.id.iv_call_more);
             tvCallNum = view.findViewById(R.id.call_num);
@@ -148,7 +147,6 @@ public class CallsAdapter extends RecyclerView.Adapter<CallsAdapter.ViewHolder> 
                                 call.isSpam = true;
                                 item.setTitle("Не спам");
                             }
-                            db.callDao().delete(phone);
                         }
                         db.callDao().insertAll(call);
                         return true;

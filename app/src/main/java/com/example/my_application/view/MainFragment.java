@@ -2,6 +2,7 @@ package com.example.my_application.view;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
@@ -80,7 +83,7 @@ public class MainFragment extends Fragment {
     private void getCallDetails() {
         ArrayList<Call> calls = getCalls();
 
-        AppDB db = ((MainActivity)getActivity()).db;
+        AppDB db = ((MainActivity) getActivity()).db;
 
         ArrayList<Call> dbCalls = new ArrayList<>();
         for (CallEntity dbNumber : db.callDao().getAll()) {
@@ -144,19 +147,35 @@ public class MainFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.settings:
-                NavHostFragment navFragment = (NavHostFragment) ((AppCompatActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                NavHostFragment navFragment =
+                        (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 navFragment.getNavController().navigate(R.id.action_mainFragment_to_settingsFragment);
+                return true;
+            case R.id.exit:
+                NavHostFragment navHostFragment =
+                        (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                NavController navController = navHostFragment.getNavController();
+                navController.navigate(R.id.registerFragment,
+                        null, new NavOptions.Builder().setPopUpTo(R.id.mainFragment, true).build());
+                unRegister();
                 return true;
             default:
                 return false;
         }
     }
 
+    private void unRegister() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        sharedPref.edit().putBoolean(getString(R.string.preference_is_registered), false).apply();
+        sharedPref.edit().putString(getString(R.string.preference_current_phone), "").apply();
+    }
+
     private void showSearches(String s) {
         callsAdapter.filter(s);
-        if (callsAdapter.callsIsEmpty()){
+        if (callsAdapter.callsIsEmpty()) {
 
             String dynamicUrl = "http://www.google.com/search?q=" + s;
             String linkedText = String.format("<a href=\"%s\">Поиск в Google</a> ", dynamicUrl);
@@ -165,7 +184,7 @@ public class MainFragment extends Fragment {
             recyclerView.setVisibility(View.GONE);
             callsNotFound.setVisibility(View.VISIBLE);
             searchInGoogle.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             recyclerView.setVisibility(View.VISIBLE);
             callsNotFound.setVisibility(View.GONE);
             searchInGoogle.setVisibility(View.GONE);
@@ -184,7 +203,7 @@ public class MainFragment extends Fragment {
 
         while (managedCursor.moveToNext()) {
             String phNumber = managedCursor.getString(number);
-            if (phNumber.startsWith("8")){
+            if (phNumber.startsWith("8")) {
                 phNumber = phNumber.replaceFirst("8", "+7");
             }
             String callDate = managedCursor.getString(date);

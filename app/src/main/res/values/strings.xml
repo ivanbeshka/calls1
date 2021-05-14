@@ -11,4 +11,12 @@
     <string name="search_hint">Введите номер</string>
     <string name="txtCredits"><a href="http://www.google.com">Найти в Google</a></string>
     <string name="enter_message">Напишите комментарий</string>
+    <string name="have_acc"><a href = "">Уже есть аккаунт</a></string>
+    <string name="preference_is_registered">is_registered</string>>
+    <string name="preference_file_key">preference_key_439242</string>
+    <string name="password">Пароль</string>
+    <string name="login">Логин</string>
+    <string name="register"><a href = "">Зарегистрироваться</a></string>
+    <string name="exit">Выйти</string>
+    <string name="preference_current_phone">current_phone</string>
 </resources>

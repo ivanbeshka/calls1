@@ -1,5 +1,7 @@
 package com.example.my_application.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -62,9 +64,11 @@ public class CommentsFragment extends Fragment {
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yy HH:mm");
             String nowDate = format.format(new Date());
             if (!comment.isEmpty()) {
+                String commentPhone = getCommentPhone();
+
                 CommentEntity commentEntity = new CommentEntity();
                 commentEntity.comment = comment;
-                commentEntity.commentPhone = "my name";
+                commentEntity.commentPhone = commentPhone;
                 commentEntity.date = nowDate;
                 commentEntity.phone = getPhone();
                 db.commentDao().insertAll(commentEntity);
@@ -76,6 +80,12 @@ public class CommentsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private String getCommentPhone() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        return sharedPref.getString(getString(R.string.preference_current_phone), "");
     }
 
     private void setRecyclerViewData() {

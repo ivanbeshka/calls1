@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.preference.SwitchPreference
+        app:iconSpaceReserved="false"
         app:key="spam"
         app:title="Заблокировать спам-звонки" />
 </androidx.preference.PreferenceScreen>

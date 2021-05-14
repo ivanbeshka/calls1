@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.room.Room;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
     public AppDB db;
 
     private static final int REQUEST_PERMISSIONS_READ_CALL_LOG = 1;
-    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 2;
-    private static final int MY_PERMISSIONS_REQUEST_PROCESS_OUTGOING_CALLS = 3;
     private static final int MY_PERMISSIONS_REQUEST_ANSWER_CALLS = 4;
 
     private final MyPhoneStateListener phoneStateListener = new MyPhoneStateListener();
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         if (!checkPermissions()) {
             requestPermissions();
         } else {
-            navigateToMainFragment();
+            navigateUser();
         }
 
         db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "contact.db").allowMainThreadQueries().build();
@@ -54,13 +54,29 @@ public class MainActivity extends AppCompatActivity {
         getApplicationContext().registerReceiver(receiver, filter);
     }
 
-    private void navigateToMainFragment() {
+    private void navigateUser() {
+        if (isUserRegistered()) {
+            navigateTo(R.id.mainFragment, R.id.registerFragment);
+        } else {
+            navigateTo(R.id.registerFragment, R.id.mainFragment);
+        }
+    }
+
+    private boolean isUserRegistered() {
+        SharedPreferences sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(getString(R.string.preference_is_registered), false);
+    }
+
+    private void navigateTo(int resId, int popUpTo) {
         NavHostFragment navHostFragment =
                 (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
         NavController navController = navHostFragment.getNavController();
-        navController.navigate(R.id.mainFragment);
+        navController.navigate(resId, null, new NavOptions.Builder().setPopUpTo(popUpTo, true).build());
     }
+
+
 
     /**
      * this method request to permission asked.
@@ -112,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Error", "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (checkPermissions()) {
-                    navigateToMainFragment();
+                    navigateUser();
                 }
             } else {
             }
@@ -123,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Error", "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (checkPermissions()) {
-                    navigateToMainFragment();
+                    navigateUser();
                 }
             } else {
             }

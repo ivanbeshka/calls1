@@ -82,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
      * this method request to permission asked.
      */
     private void requestPermissions() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.READ_CALL_LOG);
 
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
@@ -129,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (checkPermissions()) {
                     navigateUser();
+                } else {
+                    requestPermissions();
                 }
             } else {
             }
@@ -140,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (checkPermissions()) {
                     navigateUser();
+                } else {
+                    requestPermissions();
                 }
             } else {
             }

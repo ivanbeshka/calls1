@@ -45,11 +45,22 @@ public class RegisterFragment extends Fragment {
         btnRegister.setOnClickListener(v -> {
             UserDao userDao = ((MainActivity) getActivity()).db.userDao();
             String phone = etLogin.getEditableText().toString();
+            String pass = etPassword.getEditableText().toString();
+
+            if (phone.length() < 6) {
+                Toast.makeText(getContext(), "Некорректный номер телефона", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if (pass.length() < 6){
+                Toast.makeText(getContext(), "Слишком короткий пароль", Toast.LENGTH_LONG).show();
+                return;
+            }
 
             List<UserEntity> userEntity = userDao.getUser(phone);
             if (userEntity == null || userEntity.size() == 0){
                 UserEntity user = new UserEntity();
-                user.password = etPassword.getEditableText().toString();
+                user.password = pass;
                 user.phone = phone;
                 userDao.insertUser(user);
                 navigateTo(R.id.mainFragment);
